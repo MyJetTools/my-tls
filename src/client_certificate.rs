@@ -22,8 +22,9 @@ impl ClientCertificate {
 
         let private_key = private_key.private_key_to_pkcs8().unwrap();
 
-        let cert_chain = if let Some(pem) = &pkcs12.cert {
-            vec![pem.to_pem().unwrap().into()]
+        let cert_chain = if let Some(x509) = &pkcs12.cert {
+            let der = x509.to_der().unwrap();
+            vec![der.into()]
         } else {
             vec![]
         };
