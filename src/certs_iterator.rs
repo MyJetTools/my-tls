@@ -40,31 +40,15 @@ impl<'s> CertificatesIterator<'s> {
 }
 
 impl<'s> Iterator for CertificatesIterator<'s> {
-    type Item = Vec<u8>;
+    type Item = (usize, usize);
 
     fn next(&mut self) -> Option<Self::Item> {
         let from_pos = self.locate_cert()?;
 
-        let result = self.iterator.get_slice_to_current_pos(from_pos).to_vec();
-        Some(result)
+        Some((from_pos, self.iterator.get_pos()))
     }
 }
 
-/*
-impl<'s> Iterator for CertificatesIterator<'s> {
-    type Item = &'s [u8];
-
-    fn next<'d: 's>(&'d mut self) -> Option<&'s [u8]> {
-        let from_pos = self.find_pos(BEGIN_CERTIFICATE_MARKER)?;
-        self.find_pos(END_CERTIFICATE_MARKER)?;
-
-        self.iterator.advance(END_CERTIFICATE_MARKER.len())?;
-
-        let result = self.iterator.get_slice_to_current_pos(from_pos);
-        Some(result)
-    }
-}
- */
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -100,7 +84,7 @@ MIIEKjCCAxKgAwIBAgIEOGPe+DANBgkqhkiG9w0BAQUFADCBtDEUMBIGA1UEChMLRW50cnVzdC5u
 MIIDdTCCAl2gAwIBAgILBAAAAAABFUtaw5QwDQYJKoZIhvcNAQEFBQAwVzELMAkGA1UEBhMCQkUx
 -----END CERTIFICATE-----"#
                 .as_bytes(),
-            result[0]
+            &certs.as_bytes()[result[0].0..result[0].1]
         );
 
         assert_eq!(
@@ -108,7 +92,7 @@ MIIDdTCCAl2gAwIBAgILBAAAAAABFUtaw5QwDQYJKoZIhvcNAQEFBQAwVzELMAkGA1UEBhMCQkUx
 MIIEKjCCAxKgAwIBAgIEOGPe+DANBgkqhkiG9w0BAQUFADCBtDEUMBIGA1UEChMLRW50cnVzdC5u
 -----END CERTIFICATE-----"#
                 .as_bytes(),
-            result[1]
+            &certs.as_bytes()[result[1].0..result[1].1]
         );
     }
 }

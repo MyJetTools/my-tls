@@ -12,18 +12,20 @@ lazy_static::lazy_static! {
         let certificates_iterator = CertificatesIterator::new(ALL_CERTIFICATES);
 
 
-        root_cert_store.add_parsable_certificates(certificates_iterator.into_iter().map(|itm| pem_to_der(itm)));
+        root_cert_store.add_parsable_certificates(certificates_iterator.into_iter().map(|itm| pem_to_der({
+            &ALL_CERTIFICATES[itm.0..itm.1]
+        })));
 
         Arc::new(root_cert_store)
 
     };
 }
 
-pub fn pem_to_der<'s>(pem_data: Vec<u8>) -> CertificateDer<'s> {
-    pem_data.into()
-    //use pem::parse;
+pub fn pem_to_der(pem_data: &'static [u8]) -> CertificateDer<'static> {
     // Parse the PEM file
-    //let pem = parse(pem_data).unwrap();
+    let pem = pem::parse(pem_data).unwrap();
+
+    pem.contents().to_vec().into()
 
     // The pem::Pem struct contains the decoded data
     // pem.contents().to_vec()
@@ -68,3 +70,17 @@ fn split_certificates() -> Vec<&'static [u8]> {
 
 
      */
+
+#[cfg(test)]
+mod tests {
+    use crate::{CertificatesIterator, ALL_CERTIFICATES};
+
+    #[test]
+    fn test_loading_certs() {
+        let certificates_iterator = CertificatesIterator::new(ALL_CERTIFICATES);
+
+        for cert in certificates_iterator {
+            let _ = super::pem_to_der(&ALL_CERTIFICATES[cert.0..cert.1]);
+        }
+    }
+}

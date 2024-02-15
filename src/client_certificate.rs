@@ -1,11 +1,8 @@
-use openssl::{
-    pkey::{PKey, Private},
-    x509::X509,
-};
+use tokio_rustls::rustls::pki_types::{CertificateDer, PrivateKeyDer};
 
 pub struct ClientCertificate {
-    pub pkey: PKey<Private>,
-    pub cert: X509,
+    pub private_key: PrivateKeyDer<'static>,
+    pub cert_chain: Vec<CertificateDer<'static>>,
 }
 
 impl ClientCertificate {
@@ -21,16 +18,26 @@ impl ClientCertificate {
             .parse2(password)
             .unwrap();
 
-        let pkey: PKey<Private> = pkcs12.pkey.unwrap();
-        let cert: X509 = pkcs12.cert.unwrap();
+        let private_key = pkcs12.pkey.unwrap();
 
-        Self { pkey, cert }
+        let private_key = private_key.private_key_to_pkcs8().unwrap();
+
+        let cert_chain = if let Some(pem) = &pkcs12.cert {
+            vec![pem.to_pem().unwrap().into()]
+        } else {
+            vec![]
+        };
+
+        Self {
+            private_key: PrivateKeyDer::Pkcs8(private_key.into()),
+            cert_chain,
+        }
     }
 
     pub fn clone(&self) -> Self {
         Self {
-            pkey: self.pkey.clone(),
-            cert: self.cert.clone(),
+            private_key: self.private_key.clone_key(),
+            cert_chain: self.cert_chain.clone(),
         }
     }
 }
