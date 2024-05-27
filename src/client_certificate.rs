@@ -35,6 +35,15 @@ impl ClientCertificate {
         }
     }
 
+    pub async fn load_pks12_from_file(file_name: &str, password: &str) -> Result<Self, String> {
+        let file_name = rust_extensions::file_utils::format_path(file_name);
+        let content = tokio::fs::read(file_name.as_str())
+            .await
+            .map_err(|itm| format!("Can not load file {}: Err:{:?}", file_name.as_str(), itm))?;
+        let cert = Self::from_pkcs12(&content, password);
+        Ok(cert)
+    }
+
     pub fn clone(&self) -> Self {
         Self {
             private_key: self.private_key.clone_key(),
