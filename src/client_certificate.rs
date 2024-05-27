@@ -41,4 +41,11 @@ impl ClientCertificate {
             cert_chain: self.cert_chain.clone(),
         }
     }
+
+    pub fn get_certified_key(&self) -> tokio_rustls::rustls::sign::CertifiedKey {
+        let private_key =
+            tokio_rustls::rustls::crypto::aws_lc_rs::sign::any_supported_type(&self.private_key)
+                .unwrap();
+        tokio_rustls::rustls::sign::CertifiedKey::new(self.cert_chain.clone(), private_key)
+    }
 }
