@@ -6,6 +6,8 @@ pub use cert_content::*;
 mod certs_iterator;
 pub use certs_iterator::*;
 
+pub extern crate tokio_rustls;
+
 pub fn get_trusted_certs(other_certs: Option<&[u8]>) -> tokio_rustls::rustls::RootCertStore {
     let mut root_cert_store = tokio_rustls::rustls::RootCertStore::empty();
 
