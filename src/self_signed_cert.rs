@@ -1,10 +1,17 @@
 use rust_extensions::StrOrString;
-use rustls_pki_types::CertificateDer;
+use rustls_pki_types::{CertificateDer, PrivateKeyDer};
+
+pub struct SslCertificate {
+    pub certified_key: tokio_rustls::rustls::sign::CertifiedKey,
+    pub private_key: PrivateKeyDer<'static>,
+    pub certificate: CertificateDer<'static>,
+}
+
 pub fn generate<'s>(
     cn_name: impl Into<StrOrString<'s>>,
-) -> Result<tokio_rustls::rustls::sign::CertifiedKey, SelfSignedCertError> {
+) -> Result<SslCertificate, SelfSignedCertError> {
     let cn_name = cn_name.into().to_string();
-    let (cert, key_pair) = generate_pk(cn_name)?;
+    let (certificate, key_pair) = generate_pk(cn_name)?;
 
     let mut reader = std::io::BufReader::new(key_pair.as_bytes());
 
@@ -16,7 +23,13 @@ pub fn generate<'s>(
 
     let private_key = private_key.unwrap();
 
-    Ok(crate::ssl::calc_cert_key(&private_key, vec![cert]))
+    let certified_key = crate::ssl::calc_cert_key(&private_key, vec![certificate.clone()])?;
+
+    Ok(SslCertificate {
+        certified_key,
+        private_key,
+        certificate,
+    })
 }
 
 fn generate_pk(cn_name: String) -> Result<(CertificateDer<'static>, String), rcgen::Error> {
@@ -37,6 +50,7 @@ fn generate_pk(cn_name: String) -> Result<(CertificateDer<'static>, String), rcg
 pub enum SelfSignedCertError {
     IoError(std::io::Error),
     RcGenError(rcgen::Error),
+    RusTlsError(tokio_rustls::rustls::Error),
     ErrorParsingPrivateKey,
 }
 
@@ -49,6 +63,12 @@ impl From<std::io::Error> for SelfSignedCertError {
 impl From<rcgen::Error> for SelfSignedCertError {
     fn from(err: rcgen::Error) -> Self {
         Self::RcGenError(err)
+    }
+}
+
+impl From<tokio_rustls::rustls::Error> for SelfSignedCertError {
+    fn from(err: tokio_rustls::rustls::Error) -> Self {
+        Self::RusTlsError(err)
     }
 }
 
