@@ -1,7 +1,9 @@
+use rust_extensions::StrOrString;
 use rustls_pki_types::CertificateDer;
-pub fn generate(
-    cn_name: String,
+pub fn generate<'s>(
+    cn_name: impl Into<StrOrString<'s>>,
 ) -> Result<tokio_rustls::rustls::sign::CertifiedKey, SelfSignedCertError> {
+    let cn_name = cn_name.into().to_string();
     let (cert, key_pair) = generate_pk(cn_name);
 
     let mut reader = std::io::BufReader::new(key_pair.as_bytes());
