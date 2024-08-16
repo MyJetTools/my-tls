@@ -11,6 +11,7 @@ pub mod ssl;
 #[cfg(feature = "self-signed-certificate")]
 pub mod self_signed_cert;
 
+#[cfg(feature = "crl")]
 pub mod crl;
 
 pub extern crate tokio_rustls;
