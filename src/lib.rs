@@ -11,6 +11,8 @@ pub mod ssl;
 #[cfg(feature = "self-signed-certificate")]
 pub mod self_signed_cert;
 
+pub mod crl;
+
 pub extern crate tokio_rustls;
 
 pub fn get_trusted_certs(other_certs: Option<&[u8]>) -> tokio_rustls::rustls::RootCertStore {

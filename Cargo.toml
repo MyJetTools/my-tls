@@ -9,6 +9,7 @@ edition = "2021"
 [features]
 default = []
 self-signed-certificate = ["rustls-pki-types", "rcgen", "rustls-pemfile"]
+crl = ["x509-parser"]
 
 [dependencies]
 tokio-rustls = { version = "0.26.*" }
@@ -20,3 +21,4 @@ pem = "*"
 rustls-pki-types = { version = "*", optional = true }
 rcgen = { version = "*", optional = true }
 rustls-pemfile = { version = "*", optional = true }
+x509-parser = { version = "*", optional = true }
