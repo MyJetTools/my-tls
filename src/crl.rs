@@ -1,9 +1,9 @@
 use rust_extensions::date_time::DateTimeAsMicroseconds;
-use x509_parser::prelude::FromDer;
+use x509_parser::{num_bigint::BigUint, prelude::FromDer};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct CrlRecord {
-    pub serial: u64,
+    pub serial: BigUint,
     pub revoked: DateTimeAsMicroseconds,
 }
 
@@ -20,7 +20,7 @@ pub fn read(src: &[u8]) -> Result<Vec<CrlRecord>, String> {
     let mut result = Vec::new();
     for revoked_certificate in list.iter_revoked_certificates() {
         result.push(CrlRecord {
-            serial: revoked_certificate.serial().bits(),
+            serial: revoked_certificate.serial().clone(),
             revoked: DateTimeAsMicroseconds::from(revoked_certificate.revocation_date.timestamp()),
         });
 
