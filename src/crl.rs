@@ -7,8 +7,8 @@ pub struct CrlRecord {
     pub revoked: DateTimeAsMicroseconds,
 }
 
-pub fn read(src: &str) -> Result<Vec<CrlRecord>, String> {
-    let pem = pem::parse(src.as_bytes()).unwrap();
+pub fn read(src: &[u8]) -> Result<Vec<CrlRecord>, String> {
+    let pem = pem::parse(src).unwrap();
 
     if pem.tag() != "X509 CRL" {
         return Err("The provided file is not an X509 CRL".into());
