@@ -16,6 +16,12 @@ pub mod crl;
 
 pub extern crate tokio_rustls;
 
+mod create_tls_client_config;
+pub use create_tls_client_config::*;
+
+mod install_default_crypto_providers;
+pub use install_default_crypto_providers::*;
+
 pub fn get_trusted_certs(other_certs: Option<&[u8]>) -> tokio_rustls::rustls::RootCertStore {
     let mut root_cert_store = tokio_rustls::rustls::RootCertStore::empty();
 

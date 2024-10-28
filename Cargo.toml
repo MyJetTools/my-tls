@@ -12,7 +12,7 @@ self-signed-certificate = ["rustls-pki-types", "rcgen", "rustls-pemfile"]
 crl = ["x509-parser"]
 
 [dependencies]
-tokio-rustls = { version = "0.26.*" }
+tokio-rustls = { version = "0.26.*", features = ["ring"] }
 tokio = { version = "*", features = ["fs"] }
 lazy_static = "*"
 openssl = { version = "*" }
