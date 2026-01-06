@@ -8,8 +8,8 @@ edition = "2021"
 
 [features]
 default = []
-self-signed-certificate = ["rustls-pki-types", "rcgen", "rustls-pemfile"]
-crl = ["x509-parser"]
+self-signed-certificate = ["rcgen"]
+
 
 [dependencies]
 tokio-rustls = { version = "0.26.*", features = ["ring"] }
@@ -18,7 +18,7 @@ lazy_static = "*"
 openssl = { version = "*" }
 rust-extensions = { tag = "0.1.5", git = "https://github.com/MyJetTools/rust-extensions.git" }
 pem = "*"
-rustls-pki-types = { version = "*", optional = true }
+rustls-pki-types = { version = "*" }
 rcgen = { version = "*", optional = true }
-rustls-pemfile = { version = "*", optional = true }
-x509-parser = { version = "*", optional = true }
+rustls-pemfile = { version = "*" }
+x509-parser = { version = "*" }
