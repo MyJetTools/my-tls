@@ -19,8 +19,7 @@ pub use create_tls_client_config::*;
 
 mod install_default_crypto_providers;
 pub use install_default_crypto_providers::*;
-mod cert_info;
-pub use cert_info::*;
+pub mod cert_info;
 
 pub fn get_trusted_certs(other_certs: Option<&[u8]>) -> tokio_rustls::rustls::RootCertStore {
     let mut root_cert_store = tokio_rustls::rustls::RootCertStore::empty();
