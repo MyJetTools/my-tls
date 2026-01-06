@@ -5,13 +5,11 @@ mod cert_content;
 pub use cert_content::*;
 mod certs_iterator;
 pub use certs_iterator::*;
-#[cfg(feature = "self-signed-certificate")]
+
 pub mod ssl;
 
-#[cfg(feature = "self-signed-certificate")]
-pub mod self_signed_cert;
+//pub mod self_signed_cert;
 
-#[cfg(feature = "crl")]
 pub mod crl;
 
 pub extern crate tokio_rustls;

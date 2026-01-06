@@ -21,7 +21,7 @@ lazy_static::lazy_static! {
     };
 }
 
-pub fn pem_to_der(pem_data: &[u8]) -> CertificateDer {
+pub fn pem_to_der<'s>(pem_data: &'s [u8]) -> CertificateDer<'s> {
     // Parse the PEM file
     let pem = pem::parse(pem_data).unwrap();
 

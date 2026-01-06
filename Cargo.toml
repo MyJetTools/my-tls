@@ -8,7 +8,6 @@ edition = "2021"
 
 [features]
 default = []
-self-signed-certificate = ["rcgen"]
 
 
 [dependencies]
@@ -19,6 +18,6 @@ openssl = { version = "*" }
 rust-extensions = { tag = "0.1.5", git = "https://github.com/MyJetTools/rust-extensions.git" }
 pem = "*"
 rustls-pki-types = { version = "*" }
-rcgen = { version = "*", optional = true }
+rcgen = { version = "*" }
 rustls-pemfile = { version = "*" }
 x509-parser = { version = "*" }
