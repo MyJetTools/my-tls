@@ -6,12 +6,14 @@ pub struct ClientCertificate {
 }
 
 impl ClientCertificate {
+    #[cfg(unix)]
     pub async fn from_pks12_file(filename: &str, password: &str) -> Self {
         let filename = rust_extensions::file_utils::format_path(filename);
         let content = tokio::fs::read(filename.as_str()).await.unwrap();
         Self::from_pkcs12(&content, password)
     }
 
+    #[cfg(unix)]
     pub fn from_pkcs12(src: &[u8], password: &str) -> Self {
         let pkcs12 = openssl::pkcs12::Pkcs12::from_der(src)
             .unwrap()
@@ -35,6 +37,7 @@ impl ClientCertificate {
         }
     }
 
+    #[cfg(unix)]
     pub async fn load_pks12_from_file(file_name: &str, password: &str) -> Result<Self, String> {
         let file_name = rust_extensions::file_utils::format_path(file_name);
         let content = tokio::fs::read(file_name.as_str())
